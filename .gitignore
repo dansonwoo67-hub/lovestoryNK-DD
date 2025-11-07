@@ -1,0 +1,11 @@
+# OS & editor junk
+.DS_Store
+Thumbs.db
+*.log
+
+# Node (若后续引入)
+node_modules/
+
+# Build/archives
+*.zip
+dist/

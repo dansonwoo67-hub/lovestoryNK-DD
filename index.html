@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>Space Love Countdown · Cairo ⇄ Amman</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Baloo+2:wght@600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- 欧式花体：用于主副标题 -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- 柔光覆盖层（让 UI 漂浮于背景之上） -->
+      <div id="bg-glow" aria-hidden="true"></div>
+      <!-- 标题组（居中靠上） -->
+      <div class="titles">
+        <h1 class="main-title">Space Love Countdown</h1>
+        <h2 class="sub-title">From 安曼 to 开罗</h2>
+      </div>
+      <!-- 分段倒计时：优雅手绘数字分段（不翻牌） -->
+      <div id="countdownPanel" class="countdown-segment">
+        <div class="seg"><span id="dNum">0</span><label>天</label></div>
+        <div class="sep">·</div>
+        <div class="seg"><span id="hNum">00</span><label>时</label></div>
+        <div class="sep">:</div>
+        <div class="seg"><span id="mNum">00</span><label>分</label></div>
+        <div class="sep">:</div>
+        <div class="seg"><span id="sNum">00</span><label>秒</label></div>
+      </div>
+
+      <!-- 手绘风音乐面板（底部居中） -->
+      <div class="music-panel" id="musicPanel">
+        <button id="btnPlay" class="btn" aria-label="Play/Pause">▶︎/❚❚</button>
+        <label for="vol">音量</label>
+        <input id="vol" type="range" min="0" max="100" value="25" />
+        <div class="meta">Rina Sawayama · Chosen Family</div>
+      </div>
+
+      <!-- 2D 画布与气泡层 -->
+      <div id="canvas-container">
+        <canvas id="scene"></canvas>
+        <div id="bubble-layer"></div>
+        <div id="danmu-layer"></div>
+      </div>
+      <!-- YouTube 播放器（隐藏） -->
+      <div id="yt-holder" style="position:absolute;left:-9999px;top:-9999px;width:320px;height:180px;"></div>
+    </div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script type="module" src="./main.js"></script>
+  </body>
+  </html>

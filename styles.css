@@ -1,0 +1,156 @@
+:root {
+  --bg: #0f1b33;         /* 吉卜力夜空基底（深蓝） */
+  --bg-soft: #1a2d4d;    /* 夜空层次（偏灰蓝） */
+  --text: #f8fbff;       /* 柔白文字 */
+  --muted: #c6d0e3;      /* 次级文字 */
+  --accent: #ffd8a8;     /* 暖桃色点缀 */
+  --accent-strong: #ffb36b; /* 更暖的橙桃色 */
+  --line: #5e748a;       /* 铅笔描边色 */
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  /* 使用最终背景图片（规范路径：assets/bg-final-nebula.jpg） */
+  background: url('./assets/bg-final-nebula.jpg') center/cover no-repeat fixed, linear-gradient(180deg, var(--bg), var(--bg-soft));
+  color: var(--text);
+  font-family: 'Playfair Display', serif;
+}
+
+#app { position: relative; width: 100%; height: 100%; overflow: hidden; }
+
+#canvas-container { position: absolute; inset: 0; z-index: 2; }
+
+/* 柔光层：让 UI 浮于背景之上 */
+#bg-glow { position: absolute; inset: 0; background: rgba(255,255,255,0.15); pointer-events: none; z-index: 1; }
+
+/* 标题组（居中靠上） */
+.titles { position: absolute; left: 50%; top: clamp(40px, 10vh, 100px); transform: translateX(-50%); text-align: center; z-index: 3; }
+.main-title { font-family: 'Great Vibes', 'Playfair Display', serif; font-weight: 400; font-size: clamp(44px, 7vw, 86px); letter-spacing: 0.02em; color: #0d2a5a; animation: titleGlowSlow 6s ease-in-out infinite alternate; }
+.sub-title { font-family: 'Great Vibes', 'Playfair Display', serif; font-weight: 400; font-size: clamp(24px, 4vw, 36px); color: #0d2a5a; margin-top: 6px; animation: titleGlowSlow 8s ease-in-out infinite alternate; }
+@keyframes titleGlowSlow { from { text-shadow: 0 0 6px rgba(30,70,150,0.12), 0 0 14px rgba(80,140,220,0.16); } to { text-shadow: 0 0 12px rgba(30,70,150,0.22), 0 0 28px rgba(80,140,220,0.26); } }
+
+/* 弹幕层与样式 */
+#danmu-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 3; }
+.danmu {
+  position: absolute;
+  left: -280px;
+  top: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 17px; /* 字体加两个号（更大一些） */
+  color: #fff6e0; /* 奶油白 */
+  text-shadow: 0 1px 0 rgba(255,255,255,0.35), 0 0 10px rgba(255, 179, 107, 0.22);
+  white-space: nowrap;
+  will-change: transform;
+  animation-name: danmuMove;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes danmuMove {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(100vw + 320px)); }
+}
+
+/* 2D UI（CSS2DRenderer）样式 */
+.countdown-segment {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px; border-radius: 18px;
+  background: linear-gradient(180deg, rgba(40, 56, 86, 0.68), rgba(26, 42, 68, 0.68));
+  border: 2px solid var(--line);
+  box-shadow: 0 12px 28px rgba(18, 20, 26, 0.45);
+  backdrop-filter: blur(8px);
+  z-index: 3;
+}
+.countdown-segment .seg { display:flex; align-items: baseline; gap: 8px; }
+.countdown-segment .seg span { font-size: clamp(30px, 5vw, 54px); color: #fff6e8; text-shadow: 0 1px 0 rgba(255,255,255,0.35), 0 0 18px rgba(255, 179, 107, 0.22); }
+.countdown-segment .seg label { font-size: clamp(12px, 2vw, 16px); color: var(--muted); }
+.countdown-segment .sep { color: var(--accent); opacity: 0.95; font-size: clamp(16px, 3vw, 24px); }
+
+@keyframes titleGlow { 0%, 100% { filter: drop-shadow(0 0 0 rgba(184,199,255,0.0)); } 50% { filter: drop-shadow(0 0 18px rgba(184,199,255,0.55)); } }
+
+/* CSS2DRenderer 标签样式 */
+.label { display:none; }
+
+.bubble {
+  position: relative;
+  font-size: 14px;
+  color: #f8fbff;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(44,60,90,0.88), rgba(22,30,48,0.88));
+  border: 2px solid var(--line);
+  box-shadow: 0 14px 30px rgba(10,12,18,0.5);
+  max-width: 360px;
+}
+.bubble::after {
+  content: '';
+  position: absolute; left: 24px; bottom: -10px;
+  width: 22px; height: 14px; border-radius: 50% 50% 50% 0;
+  background: rgba(22,30,48,0.88);
+  border: 2px solid var(--line);
+  transform: rotate(18deg);
+}
+
+.music-panel { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--text); padding: 10px 14px; border-radius: 18px; background: linear-gradient(180deg, rgba(40,56,86,0.68), rgba(26,42,68,0.68)); border: 2px solid var(--line); box-shadow: 0 10px 24px rgba(10,12,18,0.45); display: flex; align-items: center; gap: 12px; position: fixed; left: 50%; transform: translateX(-50%); bottom: clamp(10px, 6vh, 36px); z-index: 3; }
+.music-panel .btn { cursor: pointer; padding: 5px 12px; border-radius: 14px; background: linear-gradient(180deg, rgba(255, 216, 168, 0.35), rgba(255, 179, 107, 0.35)); color: var(--text); border: 2px solid var(--line); box-shadow: 0 6px 16px rgba(10,12,18,0.35); }
+.music-panel .meta { color: var(--muted); }
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .hero-title { font-size: clamp(24px, 6vw, 48px); }
+  .countdown-panel { padding: 6px 10px; border-radius: 12px; }
+}
+/* --- Space Love Countdown: 标题、歌词与翻牌样式追加 --- */
+.title {
+  position: absolute;
+  top: 36px;
+  width: 100%;
+  text-align: center;
+  font-family: 'Patrick Hand', cursive;
+  font-weight: 700;
+  font-size: clamp(28px, 5vw, 64px);
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+}
+@keyframes titleGlow {
+  0% { text-shadow: 0 0 8px rgba(255,255,255,0.10), 0 0 18px rgba(160,180,255,0.14); }
+  100% { text-shadow: 0 0 18px rgba(255,255,255,0.20), 0 0 36px rgba(160,200,255,0.22); }
+}
+
+.lyrics {
+  position: absolute;
+  right: clamp(8px, 4vw, 48px);
+  bottom: clamp(8px, 4vw, 64px);
+  width: min(520px, 40vw);
+  max-height: 46vh;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  background: rgba(10, 12, 16, 0.35);
+  border: 1px solid rgba(180, 190, 220, 0.18);
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+.lyrics-inner { position: relative; }
+.lyric-line {
+  font-size: clamp(14px, 1.6vw, 18px);
+  line-height: 1.6;
+  opacity: 0.5;
+  transition: transform 420ms ease, opacity 420ms ease, font-size 420ms ease;
+  will-change: transform, opacity;
+}
+.lyric-line.active {
+  opacity: 1;
+  font-size: clamp(18px, 2vw, 22px);
+  transform: translateY(-8px);
+}
+
+/* 移除翻牌样式（不再使用） */
+
+/* 气泡层样式 */
+#bubble-layer { position: absolute; inset: 0; pointer-events: none; }
+.bubble { font-family: 'Patrick Hand', cursive; }
+.bubble.show { animation: bubbleIn 420ms ease forwards; }
+@keyframes bubbleIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
